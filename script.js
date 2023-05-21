@@ -9,6 +9,9 @@ const time = document.querySelector("#Time")
 const record = document.querySelector("#Record")
 const reset = document.querySelector(".reset")
 
+
+
+
 let showTime = () => {
 	segundos++
 	time.innerText =""
@@ -16,7 +19,7 @@ let showTime = () => {
 	time.append(segundos)
 
 }
-let	tiempoRecord = localStorage.getItem("Records")
+let	tiempoRecord = (localStorage.Records == undefined) ? 0 : localStorage.getItem("Records")
 let guardarRecords = []
 let tiempoTerminado = 0
 let segundos = 0
@@ -121,6 +124,11 @@ let setCanvasSize = () => {
 	console.log(elementsSize)
 	canvas.setAttribute("width", canvasSize)
 	canvas.setAttribute("height", canvasSize)
+
+	playerPosition.x = undefined
+	playerPosition.y = undefined
+
+
 	 startGame()
 }
 
@@ -128,7 +136,7 @@ let limpiarString = string => newString = string.trim()
 
 let startGame = () => {
   console.log({ canvasSize, elementsSize });
-
+  	
   game.font = elementsSize + 'px Verdana';
   game.textAlign = 'end';
   enemiesPosition = []
@@ -225,14 +233,17 @@ let gameWinSetRecord = () =>{
 	vidas = 3
 	showLives()
 	clearInterval(tiempo)
-	guardarRecords.push(tiempoTerminado)
-	record.innerText = ""
-	
-	if(segundos < localStorage.getItem("Records")){
+	if(localStorage.Records == undefined){
+		localStorage.setItem("Records", tiempoTerminado)
+		resultado = `!Fue facil, ahora supera tu record! ${emojis["WIN"]}`
+		paintRecord()
+
+	}		
+	else if(segundos < localStorage.getItem("Records") ){
 		localStorage.setItem("Records", tiempoTerminado)
 		tiempoRecord = localStorage.getItem("Records")
-		paintRecord()
 		resultado = `!Haz superado tu record, felicitaciones! ${emojis["WIN"]}`
+		paintRecord()
 	}
 	else{
 		resultado = `!No superaste tu record, que desgracia! ${emojis["PLAYER"]}`	
@@ -252,8 +263,11 @@ let gameWinSetRecord = () =>{
 	reset.addEventListener("click", () => window.location.reload())
 	terminado = true
 }
+
+
+
 let paintRecord = () =>{
-		record.innerText = ""
+	record.innerText = ""
 	record.append(tiempoRecord)
 	}
 paintRecord()
